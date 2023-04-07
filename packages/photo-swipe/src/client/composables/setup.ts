@@ -30,6 +30,8 @@ export const setupPhotoSwipe = (): void => {
         const handler = (): void => {
           const dataSource = Array(images.length).fill({
             html: LOADING_ICON,
+            element: image,
+            msrc: image.src,
           });
 
           const photoSwipe = new PhotoSwipe({
@@ -43,7 +45,7 @@ export const setupPhotoSwipe = (): void => {
           photoSwipe.on("uiRegister", () => {
             if (isSupported)
               // add fullscreen button
-              photoSwipe.ui.registerElement({
+              photoSwipe.ui!.registerElement({
                 name: "fullscreen",
                 order: 7,
                 isButton: true,
@@ -56,7 +58,7 @@ export const setupPhotoSwipe = (): void => {
               });
 
             // add download button
-            photoSwipe.ui.registerElement({
+            photoSwipe.ui!.registerElement({
               name: "download",
               order: 8,
               isButton: true,
@@ -70,18 +72,20 @@ export const setupPhotoSwipe = (): void => {
                 outlineID: "pswp__icn-download",
               },
 
-              onInit: (el: HTMLAnchorElement, photoSwipe) => {
+              onInit: (el, photoSwipe) => {
                 el.setAttribute("download", "");
                 el.setAttribute("target", "_blank");
                 el.setAttribute("rel", "noopener");
 
                 photoSwipe.on("change", () => {
-                  el.href = photoSwipe.currSlide.data.src;
+                  el.setAttribute("href", photoSwipe.currSlide!.data.src!);
                 });
               },
             });
           });
 
+          photoSwipe.addFilter("thumbEl", () => image);
+          photoSwipe.addFilter("placeholderSrc", () => image.src);
           photoSwipe.init();
 
           images.forEach((image, index) => {

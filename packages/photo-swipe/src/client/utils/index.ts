@@ -1,5 +1,5 @@
 import { isString } from "@vuepress/shared";
-import { type DataSourceItem } from "photoswipe";
+import { type SlideData } from "photoswipe";
 
 export const getImages = (selector: string | string[]): HTMLImageElement[] =>
   isString(selector)
@@ -10,16 +10,16 @@ export const getImages = (selector: string | string[]): HTMLImageElement[] =>
         )
         .flat();
 
-export const getImageInfo = (
-  image: HTMLImageElement
-): Promise<DataSourceItem> =>
-  new Promise<DataSourceItem>((resolve, reject) => {
+export const getImageInfo = (image: HTMLImageElement): Promise<SlideData> =>
+  new Promise<SlideData>((resolve, reject) => {
     if (image.complete) {
       resolve({
         src: image.src,
         width: image.naturalWidth,
         height: image.naturalHeight,
         alt: image.alt,
+        msrc: image.src,
+        element: image,
       });
     } else {
       image.onload = (): void => resolve(getImageInfo(image));
